@@ -1,0 +1,23 @@
+{
+    "name": "nelwhix/portfolio-api",
+    "description": "api to manage projects on my portfolio website with jwt auth and mongodb",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Nelwhix\\PortfolioApi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Nelson Isioma",
+            "email": "58360242+Nelwhix@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "nikic/fast-route": "^1.3",
+        "symfony/http-foundation": "^6.2",
+        "rdlowrey/auryn": "^1.4",
+        "nesbot/carbon": "^2.65"
+    }
+}
