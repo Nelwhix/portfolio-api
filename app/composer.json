@@ -19,5 +19,13 @@
         "symfony/http-foundation": "^6.2",
         "rdlowrey/auryn": "^1.4",
         "nesbot/carbon": "^2.65"
+    },
+    "require-dev": {
+        "pestphp/pest": "^1.22"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }

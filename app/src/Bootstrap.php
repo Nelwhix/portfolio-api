@@ -2,7 +2,6 @@
 
 namespace Nelwhix\PortfolioApi;
 
-use Auryn\Injector;
 use Symfony\Component\HttpFoundation\Response;
 
 require __DIR__ . '/../vendor/autoload.php';
