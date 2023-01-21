@@ -10,5 +10,15 @@ return [
         'GET',
         '/ping',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'ping']
+    ],
+    [
+        'POST',
+        '/api/user/create',
+        ['Nelwhix\PortfolioApi\Handlers\UserHandler', 'store']
+    ],
+    [
+        'POST',
+        '/api/user/login',
+        ['Nelwhix\PortfolioApi\Handlers\UserHandler', 'login']
     ]
 ];
