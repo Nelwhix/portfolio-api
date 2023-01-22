@@ -77,8 +77,8 @@ class UserHandler
 
         $secret_key = '68V0zWFrS72GbpPreidkQFLfj4v9m3Ti+DXc8OB0gcM=';
         $date = new CarbonImmutable();
-        $expire_at = $date->addMinutes(6)->getTimestamp();
-        $domainName = "127.0.0.1:8088";
+        $expire_at = $date->addMinute()->getTimestamp();
+        $domainName = "localhost";
         $request_data = [
             'iat' => $date->getTimestamp(),
             'iss' => $domainName,
