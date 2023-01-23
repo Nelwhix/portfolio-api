@@ -2,9 +2,14 @@
 
 namespace Nelwhix\PortfolioApi;
 
+use Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
 
 require __DIR__ . '/../vendor/autoload.php';
+
+// Load all the environment variables
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
 $injector = include('Dependencies.php');
 
