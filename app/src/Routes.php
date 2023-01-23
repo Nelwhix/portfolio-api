@@ -20,5 +20,10 @@ return [
         'POST',
         '/api/user/login',
         ['Nelwhix\PortfolioApi\Handlers\UserHandler', 'login']
+    ],
+    [
+        'POST',
+        '/api/project/create',
+        ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'store']
     ]
 ];
