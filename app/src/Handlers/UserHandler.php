@@ -12,11 +12,10 @@ use Respect\Validation\Validator as v;
 class UserHandler
 {
     public function __construct(private Request $request, private Response $response){}
-
+    
     public function store() {
-        // validate request parameters
+        // validate request parameter
         $email = $this->request->request->get('email');
-
         if (!$email) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
@@ -69,25 +68,34 @@ class UserHandler
         $database = new Database();
 
         $collection = $database->database->users;
+
+        // check whether that email has been used before
+        $result = $collection->findOne(
+            ['email' => $email],
+            ["projection" => [
+                "email" => 1
+            ]]
+        );
+
+        if ($result?->email) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                'message' => "Email taken"
+            ]));
+
+            return;
+        }
+
+
         $result = $collection->insertOne([
            'name' => $name,
             'email' => $email,
             'password' => password_hash($password, PASSWORD_DEFAULT)
         ]);
 
-        $secret_key = '68V0zWFrS72GbpPreidkQFLfj4v9m3Ti+DXc8OB0gcM=';
-        $date = new CarbonImmutable();
-        $expire_at = $date->addMinute()->getTimestamp();
-        $domainName = "localhost";
-        $request_data = [
-            'iat' => $date->getTimestamp(),
-            'iss' => $domainName,
-            'nbf' => $date->getTimestamp(),
-            'exp' => $expire_at,
-            'userName' => $name
-        ];
 
-        $token = JWT::encode($request_data, $secret_key, 'HS512');
+
+        $token = $this->generateToken($name);
 
         $user = $collection->findOne(['_id' => $result->getInsertedId()]);
 
@@ -124,5 +132,61 @@ class UserHandler
 
             return;
         }
+
+        $database = new Database();
+
+        $collection = $database->database->users;
+
+        // check for user
+        $result = $collection->findOne(
+            ['email' => $email],
+            ["projection" => [
+                "name" => 1,
+                "email" => 1,
+                "password" => 1
+            ]]
+        );
+
+        if (!$result?->email) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Email/Password does not exist"
+            ]));
+
+            return;
+        }
+
+        if (!password_verify($password, $result->password)) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Email/Password does not exist"
+            ]));
+
+            return;
+        }
+
+        $token = $this->generateToken($result->name);
+
+        $this->response->setStatusCode(200);
+        $this->response->setContent(json_encode([
+            "message" => "Login successful",
+            "token" => $token
+        ]));
+    }
+
+    private function generateToken(String $name): string {
+        $secret_key = $_ENV['JWT_SECRET'];
+        $date = new CarbonImmutable();
+        $expire_at = $date->addMinutes(3)->getTimestamp();
+        $domainName = $_ENV['API_URL'];
+        $request_data = [
+            'iat' => $date->getTimestamp(),
+            'iss' => $domainName,
+            'nbf' => $date->getTimestamp(),
+            'exp' => $expire_at,
+            'userName' => $name
+        ];
+
+        return JWT::encode($request_data, $secret_key, 'HS512');
     }
 }

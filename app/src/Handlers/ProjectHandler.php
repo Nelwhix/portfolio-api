@@ -24,4 +24,67 @@ class ProjectHandler
             'message' => 'Portfolio API V1 by Nelson Isioma'
         ]));
     }
+
+    public function store() {
+        $name = $this->request->request('name');
+
+        if (!$name) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Name field is required"
+            ]));
+
+            return;
+        }
+        $description = $this->request->request('description');
+
+        if (!$description) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Description field is required"
+            ]));
+
+            return;
+        }
+        $tools = $this->request->request('tools');
+
+        if (!$tools) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Tools field is required"
+            ]));
+
+            return;
+        }
+        $githubLink = $this->request->request('githubLink');
+
+        if (!$githubLink) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "githubLink field is required"
+            ]));
+
+            return;
+        }
+        $projectLink = $this->request->request('projectLink');
+
+        if (!$projectLink) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "projectLink field is required"
+            ]));
+
+            return;
+        }
+        $tag = $this->request->request('tag');
+
+        if (!$tag) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Tag field is required"
+            ]));
+
+            return;
+        }
+    }
 }
