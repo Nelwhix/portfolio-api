@@ -2,6 +2,7 @@
 
 namespace Nelwhix\PortfolioApi\Handlers;
 
+use Nelwhix\PortfolioApi\Helpers;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,7 +27,20 @@ class ProjectHandler
     }
 
     public function store() {
-        $name = $this->request->request('name');
+        $token = explode(" ", $this->request->headers->get("Authorization"))[1];
+
+        $isAuthorized = Helpers::isAuthorized($token);
+
+        if (!$isAuthorized) {
+            $this->response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+            $this->response->setContent(json_encode([
+                "message"=> "Action authorization error"
+            ]));
+
+            return;
+        }
+
+        $name = $this->request->request->get('name');
 
         if (!$name) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -36,7 +50,7 @@ class ProjectHandler
 
             return;
         }
-        $description = $this->request->request('description');
+        $description = $this->request->request->get('description');
 
         if (!$description) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -46,7 +60,7 @@ class ProjectHandler
 
             return;
         }
-        $tools = $this->request->request('tools');
+        $tools = $this->request->request->get('tools');
 
         if (!$tools) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -56,7 +70,7 @@ class ProjectHandler
 
             return;
         }
-        $githubLink = $this->request->request('githubLink');
+        $githubLink = $this->request->request->get('githubLink');
 
         if (!$githubLink) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -66,7 +80,7 @@ class ProjectHandler
 
             return;
         }
-        $projectLink = $this->request->request('projectLink');
+        $projectLink = $this->request->request->get('projectLink');
 
         if (!$projectLink) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -76,7 +90,7 @@ class ProjectHandler
 
             return;
         }
-        $tag = $this->request->request('tag');
+        $tag = $this->request->request->get('tag');
 
         if (!$tag) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -86,5 +100,6 @@ class ProjectHandler
 
             return;
         }
+
     }
 }
