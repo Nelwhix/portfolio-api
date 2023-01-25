@@ -2,13 +2,23 @@
 
 namespace Nelwhix\PortfolioApi;
 
+use Carbon\CarbonImmutable;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
 class Helpers
 {
     public static function isAuthorized(String $token): bool {
-        $secret_Key  = '68V0zWFrS72GbpPreidkQFLfj4v9m3Ti+DXc8OB0gcM=';
-        $token = JWT::decode($jwt, $secret_Key, ['HS512']);
-        $now = new DateTimeImmutable();
-        $serverName = "your.domain.name";
+        $secret_Key  = $_ENV['JWT_SECRET'];
+
+        try {
+            $token = JWT::decode($token, new Key($secret_Key, 'HS512'));
+        } catch (\Exception) {
+            return false;
+        }
+
+        $now = new CarbonImmutable();
+        $serverName = $_ENV['API_URL'];
 
         if ($token->iss !== $serverName ||
             $token->nbf > $now->getTimestamp() ||
