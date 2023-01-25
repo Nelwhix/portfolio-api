@@ -3,7 +3,9 @@
 namespace Nelwhix\PortfolioApi\Handlers;
 
 use Carbon\CarbonImmutable;
+use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Nelwhix\PortfolioApi\Database;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -167,7 +169,7 @@ class UserHandler
 
         $token = $this->generateToken($result->name);
 
-        $this->response->setStatusCode(200);
+        $this->response->setStatusCode(Response::HTTP_OK);
         $this->response->setContent(json_encode([
             "message" => "Login successful",
             "token" => $token
@@ -176,13 +178,13 @@ class UserHandler
 
     private function generateToken(String $name): string {
         $secret_key = $_ENV['JWT_SECRET'];
-        $date = new CarbonImmutable();
-        $expire_at = $date->addMinutes(3)->getTimestamp();
+        $now = new CarbonImmutable();
+        $expire_at = $now->addMinutes(3)->getTimestamp();
         $domainName = $_ENV['API_URL'];
         $request_data = [
-            'iat' => $date->getTimestamp(),
+            'iat' => $now->getTimestamp(),
             'iss' => $domainName,
-            'nbf' => $date->getTimestamp(),
+            'nbf' => $now->getTimestamp(),
             'exp' => $expire_at,
             'userName' => $name
         ];
