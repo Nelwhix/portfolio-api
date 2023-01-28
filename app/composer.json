@@ -23,10 +23,12 @@
         "vlucas/phpdotenv": "^5.5",
         "mongodb/mongodb": "^1.12",
         "guzzlehttp/guzzle": "^7.0",
-        "firebase/php-jwt": "^6.3"
+        "firebase/php-jwt": "^6.3",
+        "fakerphp/faker": "^1.21"
     },
     "require-dev": {
-        "pestphp/pest": "^1.22"
+        "pestphp/pest": "^1.22",
+        "symfony/var-dumper": "^6.2"
     },
     "config": {
         "allow-plugins": {

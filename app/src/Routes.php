@@ -25,5 +25,5 @@ return [
         'POST',
         '/api/project/create',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'store']
-    ]
+    ],
 ];

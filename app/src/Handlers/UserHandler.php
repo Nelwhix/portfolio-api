@@ -3,6 +3,7 @@
 namespace Nelwhix\PortfolioApi\Handlers;
 
 use Carbon\CarbonImmutable;
+use Faker\Factory;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -95,10 +96,6 @@ class UserHandler
             'password' => password_hash($password, PASSWORD_DEFAULT)
         ]);
 
-
-
-        $token = $this->generateToken($name);
-
         $user = $collection->findOne(['_id' => $result->getInsertedId()]);
 
         $this->response->setStatusCode(Response::HTTP_CREATED);
@@ -106,7 +103,6 @@ class UserHandler
         $this->response->setContent(json_encode([
             "message" => "User created successfully",
             "data" => [
-                "token" => $token,
                 "user" => $user
             ]
         ]));
@@ -149,10 +145,12 @@ class UserHandler
             ]]
         );
 
+        $faker = Factory::create();
+
         if (!$result?->email) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
-                "message" => "Email/Password does not exist"
+                "message" => "Login failed from " . $faker->ipv4()
             ]));
 
             return;
@@ -167,28 +165,43 @@ class UserHandler
             return;
         }
 
-        $token = $this->generateToken($result->name);
+        $tokenArray = $this->generateToken($result->name);
 
         $this->response->setStatusCode(Response::HTTP_OK);
         $this->response->setContent(json_encode([
             "message" => "Login successful",
-            "token" => $token
+            "tokens" => $tokenArray
         ]));
     }
 
-    private function generateToken(String $name): string {
+    private function generateToken(String $name): array {
         $secret_key = $_ENV['JWT_SECRET'];
         $now = new CarbonImmutable();
-        $expire_at = $now->addMinutes(3)->getTimestamp();
+
+        // access token expire time
+        $expire_at1 = $now->addMinutes(3)->getTimestamp();
         $domainName = $_ENV['API_URL'];
-        $request_data = [
+        $request_data1 = [
             'iat' => $now->getTimestamp(),
             'iss' => $domainName,
             'nbf' => $now->getTimestamp(),
-            'exp' => $expire_at,
+            'exp' => $expire_at1,
             'userName' => $name
         ];
 
-        return JWT::encode($request_data, $secret_key, 'HS512');
+        // refresh token expire time
+        $expire_at2 = $now->addMinutes(6)->getTimestamp();
+        $request_data2 = [
+            'iat' => $now->getTimestamp(),
+            'iss' => $domainName,
+            'nbf' => $now->getTimestamp(),
+            'exp' => $expire_at2,
+            'userName' => $name
+        ];
+
+        return [
+            JWT::encode($request_data1, $secret_key, 'HS512'),
+            JWT::encode($request_data2, $secret_key, 'HS512')
+        ];
     }
 }
