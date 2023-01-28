@@ -2,6 +2,7 @@
 
 namespace Nelwhix\PortfolioApi\Handlers;
 
+use Nelwhix\PortfolioApi\Database;
 use Nelwhix\PortfolioApi\Helpers;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,11 +23,20 @@ class ProjectHandler
         $this->response->setStatusCode(Response::HTTP_OK);
 
         $this->response->setContent(json_encode([
-            'message' => 'Portfolio API V1 by Nelson Isioma'
+            'message' => 'Portfolio API '.  $_ENV['API_VERSION'] . ' by Nelson Isioma'
         ]));
     }
 
     public function store() {
+        if (!$this->request->headers->get("Authorization")) {
+            $this->response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+            $this->response->setContent(json_encode([
+                "message" => "Action authorization error"
+            ]));
+
+            return;
+        }
+
         $token = explode(" ", $this->request->headers->get("Authorization"))[1];
 
         $isAuthorized = Helpers::isAuthorized($token);
@@ -100,6 +110,32 @@ class ProjectHandler
 
             return;
         }
+
+        $database = new Database();
+
+        $collection = $database->database->projects;
+
+        $result = $collection->insertOne([
+            'name' => $name,
+            'description' => $description,
+            'githubLink' => $githubLink,
+            'projectLink' => $projectLink,
+            'tools' => $tools,
+            'tag' => $tag,
+        ]);
+
+        $project = $collection->findOne(
+            ['_id' => $result->getInsertedId()],
+        );
+
+        $this->response->setStatusCode(Response::HTTP_CREATED);
+
+        $this->response->setContent(json_encode([
+            "message" => "Project added successfully",
+            "data" => [
+                "project" => $project
+            ]
+        ]));
 
     }
 }

@@ -26,4 +26,9 @@ return [
         '/api/project/create',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'store']
     ],
+    [
+        'GET',
+        '/api/auth/refresh',
+        ['Nelwhix\PortfolioApi\Handlers\UserHandler', 'refresh']
+    ]
 ];

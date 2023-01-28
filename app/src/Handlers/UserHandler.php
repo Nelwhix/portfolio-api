@@ -8,6 +8,7 @@ use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Nelwhix\PortfolioApi\Database;
+use Nelwhix\PortfolioApi\Helpers;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Respect\Validation\Validator as v;
@@ -72,7 +73,7 @@ class UserHandler
 
         $collection = $database->database->users;
 
-        // check whether that email has been used before
+        // check if email is unique
         $result = $collection->findOne(
             ['email' => $email],
             ["projection" => [
@@ -96,7 +97,9 @@ class UserHandler
             'password' => password_hash($password, PASSWORD_DEFAULT)
         ]);
 
-        $user = $collection->findOne(['_id' => $result->getInsertedId()]);
+        $user = $collection->findOne(
+            ['_id' => $result->getInsertedId()],
+        );
 
         $this->response->setStatusCode(Response::HTTP_CREATED);
 
@@ -174,6 +177,47 @@ class UserHandler
         ]));
     }
 
+    public function refresh() {
+        $token = explode(" ", $this->request->headers->get("Authorization"))[1];
+
+        $secret_Key  = $_ENV['JWT_SECRET'];
+
+        try {
+            $token = JWT::decode($token, new Key($secret_Key, 'HS512'));
+        } catch (\Exception) {
+            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $this->response->setContent(json_encode([
+                "message" => "Hello hacker, have a nice day!"
+            ]));
+
+            return;
+        }
+
+        $now = new CarbonImmutable();
+        $serverName = $_ENV['API_URL'];
+
+        if ($token->iss !== $serverName ||
+            $token->nbf > $now->getTimestamp() ||
+            $token->exp < $now->getTimestamp())
+        {
+            $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $this->response->setContent(json_encode([
+                "message" => "Hello hacker, have a nice day!"
+            ]));
+        }
+
+        dd($token);
+
+        $tokenArray = $this->generateToken($token->name);
+
+        $this->response->setStatusCode(Response::HTTP_OK);
+        $this->response->setContent(json_encode([
+            "message" => "tokens refreshed",
+            "tokens" => $tokenArray
+        ]));
+
+    }
+
     private function generateToken(String $name): array {
         $secret_key = $_ENV['JWT_SECRET'];
         $now = new CarbonImmutable();
@@ -190,7 +234,7 @@ class UserHandler
         ];
 
         // refresh token expire time
-        $expire_at2 = $now->addMinutes(6)->getTimestamp();
+        $expire_at2 = $now->addMinutes(15)->getTimestamp();
         $request_data2 = [
             'iat' => $now->getTimestamp(),
             'iss' => $domainName,
