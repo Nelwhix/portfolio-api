@@ -40,5 +40,10 @@ return [
         'DELETE',
         '/api/project/{id}',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'destroy']
+    ],
+    [
+        'GET',
+        '/api/project/{id}',
+        ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'show']
     ]
 ];

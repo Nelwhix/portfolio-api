@@ -213,4 +213,29 @@ class ProjectHandler
             'message' => 'successful, ' . $result->getDeletedCount()
         ]));
     }
+
+    public function show(array $vars) {
+        $conn = new Database();
+        $collection = $conn->database->projects;
+
+        $_id = new ObjectId($vars['id']);
+        $result = $collection->findOne([
+            "_id" => $_id
+        ]);
+
+        if (!isset($result)) {
+            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $this->response->setContent(json_encode([
+                'message' => "Project with id:" . $vars["id"] . ' not found'
+            ]));
+
+            return;
+        }
+
+        $this->response->setStatusCode(200);
+        $this->response->setContent(json_encode([
+            'message' => 'successful',
+            'project' => $result
+        ]));
+    }
 }
