@@ -2,10 +2,12 @@
 
 namespace Nelwhix\PortfolioApi\Handlers;
 
+use MongoDB\BSON\ObjectId;
 use Nelwhix\PortfolioApi\Database;
 use Nelwhix\PortfolioApi\Helpers;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Uid\Ulid;
 
 class ProjectHandler
 {
@@ -115,6 +117,7 @@ class ProjectHandler
 
         $collection = $database->database->projects;
 
+        $plid = new Ulid();
         $result = $collection->insertOne([
             'name' => $name,
             'description' => $description,
@@ -162,6 +165,52 @@ class ProjectHandler
 
         $this->response->setContent(json_encode([
             'message' => 'You don\'t have any projects',
+        ]));
+    }
+
+    public function destroy(Array $vars) {
+        if (!$this->request->headers->get("Authorization")) {
+            $this->response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+            $this->response->setContent(json_encode([
+                "message" => "Action authorization error"
+            ]));
+
+            return;
+        }
+
+        $token = explode(" ", $this->request->headers->get("Authorization"))[1];
+
+        $isAuthorized = Helpers::isAuthorized($token);
+
+        if (!$isAuthorized) {
+            $this->response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+            $this->response->setContent(json_encode([
+                "message"=> "Action authorization error"
+            ]));
+
+            return;
+        }
+
+        $conn = new Database();
+        $collection = $conn->database->projects;
+
+        $_id = new ObjectId($vars['id']);
+        $result = $collection->deleteOne([
+            "_id" => $_id
+        ]);
+
+        if ($result->getDeletedCount() == 0) {
+            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $this->response->setContent(json_encode([
+                'message' => 'Project with id:' . $vars['id'] . ' not found'
+            ]));
+
+            return;
+        }
+
+        $this->response->setStatusCode(Response::HTTP_OK);
+        $this->response->setContent(json_encode([
+            'message' => 'successful, ' . $result->getDeletedCount()
         ]));
     }
 }

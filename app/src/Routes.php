@@ -33,7 +33,12 @@ return [
     ],
     [
         'GET',
-        '/api/projects',
+        '/api/project',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'index']
+    ],
+    [
+        'DELETE',
+        '/api/project/{id}',
+        ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'destroy']
     ]
 ];
