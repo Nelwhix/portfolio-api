@@ -22,13 +22,18 @@ return [
         ['Nelwhix\PortfolioApi\Handlers\UserHandler', 'login']
     ],
     [
+        'GET',
+        '/api/auth/refresh',
+        ['Nelwhix\PortfolioApi\Handlers\UserHandler', 'refresh']
+    ],
+    [
         'POST',
         '/api/project/create',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'store']
     ],
     [
         'GET',
-        '/api/auth/refresh',
-        ['Nelwhix\PortfolioApi\Handlers\UserHandler', 'refresh']
+        '/api/projects',
+        ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'index']
     ]
 ];

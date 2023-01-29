@@ -138,4 +138,30 @@ class ProjectHandler
         ]));
 
     }
+
+    public function index() {
+        $conn = new Database();
+        $collection = $conn->database->projects;
+
+        $projects = $collection->find();
+
+        foreach($projects as $project) {
+            $result[] = $project;
+        }
+
+
+        $this->response->setStatusCode(Response::HTTP_OK);
+        if (isset($result)) {
+            $this->response->setContent(json_encode([
+                'message' => 'successful',
+                'projects' => $result,
+            ]));
+
+            return;
+        }
+
+        $this->response->setContent(json_encode([
+            'message' => 'You don\'t have any projects',
+        ]));
+    }
 }

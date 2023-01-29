@@ -206,9 +206,7 @@ class UserHandler
             ]));
         }
 
-        dd($token);
-
-        $tokenArray = $this->generateToken($token->name);
+        $tokenArray = $this->generateToken($token->userName);
 
         $this->response->setStatusCode(Response::HTTP_OK);
         $this->response->setContent(json_encode([
