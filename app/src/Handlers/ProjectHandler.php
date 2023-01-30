@@ -7,7 +7,6 @@ use Nelwhix\PortfolioApi\Database;
 use Nelwhix\PortfolioApi\Helpers;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Uid\Ulid;
 
 class ProjectHandler
 {
@@ -117,7 +116,6 @@ class ProjectHandler
 
         $collection = $database->database->projects;
 
-        $plid = new Ulid();
         $result = $collection->insertOne([
             'name' => $name,
             'description' => $description,
@@ -236,6 +234,59 @@ class ProjectHandler
         $this->response->setContent(json_encode([
             'message' => 'successful',
             'project' => $result
+        ]));
+    }
+
+    public function update(array $vars) {
+        if (!$this->request->headers->get("Authorization")) {
+            $this->response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+            $this->response->setContent(json_encode([
+                "message" => "Action authorization error"
+            ]));
+
+            return;
+        }
+
+        $token = explode(" ", $this->request->headers->get("Authorization"))[1];
+
+        $isAuthorized = Helpers::isAuthorized($token);
+
+        if (!$isAuthorized) {
+            $this->response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+            $this->response->setContent(json_encode([
+                "message"=> "Action authorization error"
+            ]));
+
+            return;
+        }
+
+        $conn = new Database();
+        $collection = $conn->database->projects;
+        $_id = new ObjectId($vars["id"]);
+        $result = $collection->updateOne(
+            ["_id" => $_id],
+            ['$set' => [
+                'name' => $this->request->request?->get('name'),
+                'description' => $this->request->request?->get('description'),
+                'tools' => $this->request->request?->get('tools'),
+                'githubLink' => $this->request->request?->get('githubLink'),
+                'projectLink' => $this->request->request?->get('projectLink'),
+                'tag' => $this->request->request?->get('tag')
+            ]],
+        );
+
+        if ($result->getMatchedCount() != 1) {
+            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $this->response->setContent(json_encode([
+                'message' => 'Resource not found'
+            ]));
+
+            return;
+        }
+
+        $this->response->setStatusCode(Response::HTTP_OK);
+        $this->response->setContent(json_encode([
+            'message' => 'successful ' . $result->getModifiedCount()
         ]));
     }
 }

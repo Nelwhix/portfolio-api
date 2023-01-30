@@ -45,5 +45,10 @@ return [
         'GET',
         '/api/project/{id}',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'show']
+    ],
+    [
+        'POST',
+        '/api/project/{id}',
+        ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'update']
     ]
 ];
