@@ -263,15 +263,25 @@ class ProjectHandler
         $conn = new Database();
         $collection = $conn->database->projects;
         $_id = new ObjectId($vars["id"]);
+
+        $project = $collection->findOne([ "_id" => $_id ]);
+
+        $name = $this->request->request->get('name') ?: $project->name;
+        $description = $this->request->request->get('description') ?: $project->description;
+        $tools = $this->request->request->get('tools') ?: $project->tools;
+        $githubLink = $this->request->request->get('githubLink') ?: $project->githubLink;
+        $projectLink = $this->request->request->get('projectLink') ?: $project->projectLink;
+        $tag = $this->request->request->get('tag') ?: $project->tag;
+
         $result = $collection->updateOne(
             ["_id" => $_id],
             ['$set' => [
-                'name' => $this->request->request?->get('name'),
-                'description' => $this->request->request?->get('description'),
-                'tools' => $this->request->request?->get('tools'),
-                'githubLink' => $this->request->request?->get('githubLink'),
-                'projectLink' => $this->request->request?->get('projectLink'),
-                'tag' => $this->request->request?->get('tag')
+                'name' => $name,
+                'description' => $description,
+                'tools' => $tools,
+                'githubLink' => $githubLink,
+                'projectLink' => $projectLink,
+                'tag' => $tag
             ]],
         );
 

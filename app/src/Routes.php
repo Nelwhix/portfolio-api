@@ -50,5 +50,10 @@ return [
         'POST',
         '/api/project/{id}',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'update']
+    ],
+    [
+        'POST',
+        '/api/experience/create',
+        ['Nelwhix\PortfolioApi\Handlers\ExperienceHandler', 'store']
     ]
 ];
