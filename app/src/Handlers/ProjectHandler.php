@@ -5,6 +5,7 @@ namespace Nelwhix\PortfolioApi\Handlers;
 use MongoDB\BSON\ObjectId;
 use Nelwhix\PortfolioApi\Database;
 use Nelwhix\PortfolioApi\Helpers;
+use Nelwhix\PortfolioApi\Validator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -53,7 +54,7 @@ class ProjectHandler
 
         $name = $this->request->request->get('name');
 
-        if (!$name) {
+        if (Validator::string($name)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Name field is required"
@@ -63,7 +64,7 @@ class ProjectHandler
         }
         $description = $this->request->request->get('description');
 
-        if (!$description) {
+        if (Validator::string($description)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Description field is required"
@@ -73,7 +74,7 @@ class ProjectHandler
         }
         $tools = $this->request->request->get('tools');
 
-        if (!$tools) {
+        if (Validator::string($tools)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Tools field is required"
@@ -83,7 +84,7 @@ class ProjectHandler
         }
         $githubLink = $this->request->request->get('githubLink');
 
-        if (!$githubLink) {
+        if (Validator::string($githubLink)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "githubLink field is required"
@@ -93,7 +94,7 @@ class ProjectHandler
         }
         $projectLink = $this->request->request->get('projectLink');
 
-        if (!$projectLink) {
+        if (Validator::string($projectLink)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "projectLink field is required"
@@ -103,7 +104,7 @@ class ProjectHandler
         }
         $tag = $this->request->request->get('tag');
 
-        if (!$tag) {
+        if (!Validator::string($tag)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Tag field is required"

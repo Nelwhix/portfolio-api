@@ -19,7 +19,6 @@
         "symfony/http-foundation": "^6.2",
         "rdlowrey/auryn": "^1.4",
         "nesbot/carbon": "^2.65",
-        "respect/validation": "^2.2",
         "vlucas/phpdotenv": "^5.5",
         "mongodb/mongodb": "^1.12",
         "guzzlehttp/guzzle": "^7.0",
