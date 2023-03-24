@@ -146,7 +146,9 @@ class ProjectHandler
 
         $projects = $collection->find();
 
+        $count = 0;
         foreach($projects as $project) {
+            $count++;
             $result[] = $project;
         }
 
@@ -155,6 +157,7 @@ class ProjectHandler
         if (isset($result)) {
             $this->response->setContent(json_encode([
                 'message' => 'successful',
+                'total' => $count,
                 'projects' => $result,
             ]));
 

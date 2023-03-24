@@ -4,14 +4,12 @@ namespace Nelwhix\PortfolioApi\Handlers;
 
 use Carbon\CarbonImmutable;
 use Faker\Factory;
-use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Nelwhix\PortfolioApi\Database;
-use Nelwhix\PortfolioApi\Helpers;
+use Nelwhix\PortfolioApi\Validator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Respect\Validation\Validator as v;
 
 class UserHandler
 {
@@ -20,7 +18,7 @@ class UserHandler
     public function store() {
         // validate request parameter
         $email = $this->request->request->get('email');
-        if (!$email) {
+        if (Validator::string($email)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 'message' => "Email field is required"
@@ -30,7 +28,7 @@ class UserHandler
         }
         $name = $this->request->request->get('name');
 
-        if (!$name) {
+        if (Validator::string($name)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 'message' => "Name field is required"
@@ -51,7 +49,7 @@ class UserHandler
         $password_confirmation = $this->request->request->get('password_confirmation');
 
 
-        if (!v::email()->validate($email)) {
+        if (!Validator::email($email)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 'message' => "Please input a valid email"
@@ -114,7 +112,7 @@ class UserHandler
     public function login() {
         $email = $this->request->request->get('email');
 
-        if (!$email) {
+        if (Validator::string($email)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 'message' => "Email field is required"
@@ -122,10 +120,18 @@ class UserHandler
 
             return;
         }
+        if (!Validator::email($email)) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                'message' => "Please enter valid email"
+            ]));
+
+            return;
+        }
 
         $password = $this->request->request->get('password');
 
-        if (!$password) {
+        if (Validator::string($password)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 'message' => "Password field is required"
@@ -220,7 +226,6 @@ class UserHandler
         $secret_key = $_ENV['JWT_SECRET'];
         $now = new CarbonImmutable();
 
-        // access token expire time
         $expire_at1 = $now->addMinutes(3)->getTimestamp();
         $domainName = $_ENV['API_URL'];
         $request_data1 = [
