@@ -3,6 +3,7 @@
 namespace Nelwhix\PortfolioApi\Handlers;
 
 use MongoDB\BSON\ObjectId;
+use MongoDB\Driver\Exception\InvalidArgumentException;
 use Nelwhix\PortfolioApi\Database;
 use Nelwhix\PortfolioApi\Helpers;
 use Nelwhix\PortfolioApi\Validator;
@@ -92,6 +93,15 @@ class ProjectHandler
 
             return;
         }
+
+        if (!Validator::url($githubLink)) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Please enter a valid url"
+            ]));
+
+            return;
+        }
         $projectLink = $this->request->request->get('projectLink');
 
         if (Validator::string($projectLink)) {
@@ -102,9 +112,19 @@ class ProjectHandler
 
             return;
         }
+
+        if (!Validator::url($projectLink)) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Please enter a valid url"
+            ]));
+
+            return;
+        }
+
         $tag = $this->request->request->get('tag');
 
-        if (!Validator::string($tag)) {
+        if (Validator::string($tag)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Tag field is required"
@@ -196,7 +216,17 @@ class ProjectHandler
         $conn = new Database();
         $collection = $conn->database->projects;
 
-        $_id = new ObjectId($vars['id']);
+        try {
+            $_id = new ObjectId($vars['id']);
+        } catch (InvalidArgumentException $err) {
+            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $this->response->setContent(json_encode([
+                "message"=> "Invalid Object ID"
+            ]));
+
+            return;
+        }
+
         $result = $collection->deleteOne([
             "_id" => $_id
         ]);
