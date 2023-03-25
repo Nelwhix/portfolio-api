@@ -250,7 +250,17 @@ class ProjectHandler
         $conn = new Database();
         $collection = $conn->database->projects;
 
-        $_id = new ObjectId($vars['id']);
+         try {
+            $_id = new ObjectId($vars['id']);
+        } catch (InvalidArgumentException $err) {
+            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $this->response->setContent(json_encode([
+                "message"=> "Invalid Object ID"
+            ]));
+
+            return;
+        }
+
         $result = $collection->findOne([
             "_id" => $_id
         ]);
