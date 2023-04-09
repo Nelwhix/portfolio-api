@@ -55,7 +55,7 @@ class ProjectHandler
 
         $name = $this->request->request->get('name');
 
-        if (Validator::string($name)) {
+        if ($name === null) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Name field is required"
@@ -63,9 +63,19 @@ class ProjectHandler
 
             return;
         }
+
+        if (Validator::string($name)) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Name field is not valid string"
+            ]));
+
+            return;
+        }
         $description = $this->request->request->get('description');
 
-        if (Validator::string($description)) {
+
+        if ($description === null) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Description field is required"
@@ -73,9 +83,19 @@ class ProjectHandler
 
             return;
         }
+
+        if (Validator::string($description)) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Description field is not valid string"
+            ]));
+
+            return;
+        }
         $tools = $this->request->request->get('tools');
 
-        if (Validator::string($tools)) {
+
+        if ($tools === null) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Tools field is required"
@@ -83,7 +103,26 @@ class ProjectHandler
 
             return;
         }
+
+        if (Validator::string($tools)) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Tools field is not valid string"
+            ]));
+
+            return;
+        }
         $githubLink = $this->request->request->get('githubLink');
+
+
+        if ($githubLink === null) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Github link is required"
+            ]));
+
+            return;
+        }
 
         if (Validator::string($githubLink)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -104,6 +143,16 @@ class ProjectHandler
         }
         $projectLink = $this->request->request->get('projectLink');
 
+
+        if ($projectLink === null) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Project link is required"
+            ]));
+
+            return;
+        }
+
         if (Validator::string($projectLink)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
@@ -123,6 +172,16 @@ class ProjectHandler
         }
 
         $tag = $this->request->request->get('tag');
+
+
+        if ($tag === null) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                "message" => "Tag field is required"
+            ]));
+
+            return;
+        }
 
         if (Validator::string($tag)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);

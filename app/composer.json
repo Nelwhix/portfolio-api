@@ -24,7 +24,8 @@
         "guzzlehttp/guzzle": "^7.0",
         "firebase/php-jwt": "^6.3",
         "fakerphp/faker": "^1.21",
-      "ext-mongodb": "*"
+      "ext-mongodb": "*",
+        "filp/whoops": "^2.15"
     },
     "require-dev": {
         "pestphp/pest": "^1.22",
