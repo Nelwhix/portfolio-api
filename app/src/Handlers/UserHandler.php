@@ -16,7 +16,6 @@ class UserHandler
     public function __construct(private Request $request, private Response $response){}
     
     public function store() {
-        // validate request parameter
         $email = $this->request->request->get('email');
         if (Validator::string($email)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
