@@ -234,7 +234,7 @@ class UserHandler
 
     }
 
-    private function generateToken(String $name): array {
+    private function generateToken($user): array {
         $secret_key = $_ENV['JWT_SECRET'];
         $now = new CarbonImmutable();
 
@@ -245,17 +245,16 @@ class UserHandler
             'iss' => $domainName,
             'nbf' => $now->getTimestamp(),
             'exp' => $expire_at1,
-            'userName' => $name
+            'user' => $user
         ];
 
-        // refresh token expire time
         $expire_at2 = $now->addMinutes(15)->getTimestamp();
         $request_data2 = [
             'iat' => $now->getTimestamp(),
             'iss' => $domainName,
             'nbf' => $now->getTimestamp(),
             'exp' => $expire_at2,
-            'userName' => $name
+            'user' => $user
         ];
 
         return [
