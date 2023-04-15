@@ -17,10 +17,19 @@ class UserHandler
     
     public function store() {
         $email = $this->request->request->get('email');
-        if (Validator::string($email)) {
+
+        if (!$email) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 'message' => "Email field is required"
+            ]));
+
+            return;
+        }
+        if (Validator::string($email)) {
+            $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->response->setContent(json_encode([
+                'message' => "Please enter a valid email"
             ]));
 
             return;
@@ -96,6 +105,9 @@ class UserHandler
 
         $user = $collection->findOne(
             ['_id' => $result->getInsertedId()],
+            ["projection" => [
+                "password" => 0
+            ]]
         );
 
         $this->response->setStatusCode(Response::HTTP_CREATED);
@@ -143,7 +155,6 @@ class UserHandler
 
         $collection = $database->database->users;
 
-        // check for user
         $result = $collection->findOne(
             ['email' => $email],
             ["projection" => [
@@ -152,6 +163,8 @@ class UserHandler
                 "password" => 1
             ]]
         );
+
+//        dd($result);
 
         $faker = Factory::create();
 
@@ -173,7 +186,7 @@ class UserHandler
             return;
         }
 
-        $tokenArray = $this->generateToken($result->name);
+        $tokenArray = $this->generateToken($result);
 
         $this->response->setStatusCode(Response::HTTP_OK);
         $this->response->setContent(json_encode([
