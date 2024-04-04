@@ -53,7 +53,7 @@ class ProjectHandler
             return;
         }
 
-        $name = $this->request->request->get('name');
+        $name = $this->request->query->get('name');
 
         if ($name === null) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -64,7 +64,7 @@ class ProjectHandler
             return;
         }
 
-        if (Validator::string($name)) {
+        if (!Validator::string($name)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Name field is not valid string"
@@ -72,7 +72,7 @@ class ProjectHandler
 
             return;
         }
-        $description = $this->request->request->get('description');
+        $description = $this->request->query->get('description');
 
 
         if ($description === null) {
@@ -84,7 +84,7 @@ class ProjectHandler
             return;
         }
 
-        if (Validator::string($description)) {
+        if (!Validator::string($description)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Description field is not valid string"
@@ -92,7 +92,7 @@ class ProjectHandler
 
             return;
         }
-        $tools = $this->request->request->get('tools');
+        $tools = $this->request->query->get('tools');
 
 
         if ($tools === null) {
@@ -104,7 +104,7 @@ class ProjectHandler
             return;
         }
 
-        if (Validator::string($tools)) {
+        if (!Validator::string($tools)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Tools field is not valid string"
@@ -112,7 +112,7 @@ class ProjectHandler
 
             return;
         }
-        $githubLink = $this->request->request->get('githubLink');
+        $githubLink = $this->request->query->get('githubLink');
 
 
         if ($githubLink === null) {
@@ -124,7 +124,7 @@ class ProjectHandler
             return;
         }
 
-        if (Validator::string($githubLink)) {
+        if (!Validator::string($githubLink)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "githubLink field is required"
@@ -141,7 +141,7 @@ class ProjectHandler
 
             return;
         }
-        $projectLink = $this->request->request->get('projectLink');
+        $projectLink = $this->request->query->get('projectLink');
 
 
         if ($projectLink === null) {
@@ -153,7 +153,7 @@ class ProjectHandler
             return;
         }
 
-        if (Validator::string($projectLink)) {
+        if (!Validator::string($projectLink)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "projectLink field is required"
@@ -171,7 +171,7 @@ class ProjectHandler
             return;
         }
 
-        $tag = $this->request->request->get('tag');
+        $tag = $this->request->query->get('tag');
 
 
         if ($tag === null) {
@@ -183,7 +183,7 @@ class ProjectHandler
             return;
         }
 
-        if (Validator::string($tag)) {
+        if (!Validator::string($tag)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 "message" => "Tag field is required"
@@ -369,12 +369,12 @@ class ProjectHandler
 
         $project = $collection->findOne([ "_id" => $_id ]);
 
-        $name = $this->request->request->get('name') ?: $project->name;
-        $description = $this->request->request->get('description') ?: $project->description;
-        $tools = $this->request->request->get('tools') ?: $project->tools;
-        $githubLink = $this->request->request->get('githubLink') ?: $project->githubLink;
-        $projectLink = $this->request->request->get('projectLink') ?: $project->projectLink;
-        $tag = $this->request->request->get('tag') ?: $project->tag;
+        $name = $this->request->query->get('name') ?: $project->name;
+        $description = $this->request->query->get('description') ?: $project->description;
+        $tools = $this->request->query->get('tools') ?: $project->tools;
+        $githubLink = $this->request->query->get('githubLink') ?: $project->githubLink;
+        $projectLink = $this->request->query->get('projectLink') ?: $project->projectLink;
+        $tag = $this->request->query->get('tag') ?: $project->tag;
 
         $result = $collection->updateOne(
             ["_id" => $_id],

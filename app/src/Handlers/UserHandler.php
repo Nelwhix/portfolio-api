@@ -16,7 +16,7 @@ class UserHandler
     public function __construct(private Request $request, private Response $response){}
     
     public function store() {
-        $email = $this->request->request->get('email');
+        $email = $this->request->query->get('email');
 
         if (!$email) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -26,7 +26,7 @@ class UserHandler
 
             return;
         }
-        if (Validator::string($email)) {
+        if (!Validator::string($email)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 'message' => "Please enter a valid email"
@@ -34,9 +34,9 @@ class UserHandler
 
             return;
         }
-        $name = $this->request->request->get('name');
+        $name = $this->request->query->get('name');
 
-        if (Validator::string($name)) {
+        if (!Validator::string($name)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 'message' => "Name field is required"
@@ -44,7 +44,7 @@ class UserHandler
 
             return;
         }
-        $password = $this->request->request->get('password');
+        $password = $this->request->query->get('password');
 
         if (!$password) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -54,7 +54,7 @@ class UserHandler
 
             return;
         }
-        $password_confirmation = $this->request->request->get('password_confirmation');
+        $password_confirmation = $this->request->query->get('password_confirmation');
 
 
         if (!Validator::email($email)) {
@@ -121,9 +121,9 @@ class UserHandler
     }
 
     public function login() {
-        $email = $this->request->request->get('email');
+        $email = $this->request->query->get('email');
 
-        if (Validator::string($email)) {
+        if (!Validator::string($email)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 'message' => "Email field is required"
@@ -140,9 +140,9 @@ class UserHandler
             return;
         }
 
-        $password = $this->request->request->get('password');
+        $password = $this->request->query->get('password');
 
-        if (Validator::string($password)) {
+        if (!Validator::string($password)) {
             $this->response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             $this->response->setContent(json_encode([
                 'message' => "Password field is required"
@@ -238,7 +238,7 @@ class UserHandler
         $secret_key = $_ENV['JWT_SECRET'];
         $now = new CarbonImmutable();
 
-        $expire_at1 = $now->addMinutes(3)->getTimestamp();
+        $expire_at1 = $now->addDay()->getTimestamp();
         $domainName = $_ENV['API_URL'];
         $request_data1 = [
             'iat' => $now->getTimestamp(),

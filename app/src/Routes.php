@@ -13,7 +13,7 @@ return [
     ],
     [
         'POST',
-        '/api/user/create',
+        '/api/users',
         ['Nelwhix\PortfolioApi\Handlers\UserHandler', 'store']
     ],
     [
@@ -28,27 +28,27 @@ return [
     ],
     [
         'POST',
-        '/api/project/create',
+        '/api/projects',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'store']
     ],
     [
         'GET',
-        '/api/project',
+        '/api/projects',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'index']
     ],
     [
         'DELETE',
-        '/api/project/{id}',
+        '/api/projects/{id}',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'destroy']
     ],
     [
         'GET',
-        '/api/project/{id}',
+        '/api/projects/{id}',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'show']
     ],
     [
         'POST',
-        '/api/project/{id}',
+        '/api/projects/{id}',
         ['Nelwhix\PortfolioApi\Handlers\ProjectHandler', 'update']
     ]
 ];

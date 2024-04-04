@@ -4,13 +4,21 @@ namespace Nelwhix\PortfolioApi;
 
 use Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
+use Treblle\Factory\TreblleFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 error_reporting(E_ALL);
+ob_start();
 
 // Load all the environment variables
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
+
+$treblle = TreblleFactory::create(
+    $_ENV['TREBLLE_API_KEY'],
+    $_ENV['TREBLLE_PROJECT_ID'],
+    true
+);
 
 $whoops = new \Whoops\Run;
 

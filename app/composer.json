@@ -25,7 +25,8 @@
         "firebase/php-jwt": "^6.3",
         "fakerphp/faker": "^1.21",
       "ext-mongodb": "*",
-        "filp/whoops": "^2.15"
+        "filp/whoops": "^2.15",
+        "treblle/treblle-php": "^3.0"
     },
     "require-dev": {
         "pestphp/pest": "^1.22",
